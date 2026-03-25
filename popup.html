@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldBlock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="shield-icon" id="shieldIcon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 5.5V11C4 15.55 7.41 19.74 12 21C16.59 19.74 20 15.55 20 11V5.5L12 2Z" fill="currentColor" opacity="0.15"/>
+            <path d="M12 2L4 5.5V11C4 15.55 7.41 19.74 12 21C16.59 19.74 20 15.55 20 11V5.5L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="brand">ShieldBlock</span>
+          <span class="tagline">Ad Blocker</span>
+        </div>
+      </div>
+      <div class="toggle-wrap">
+        <label class="toggle" id="mainToggle">
+          <input type="checkbox" id="enabledCheckbox" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </header>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">Protection Active</span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalBlocked">0</div>
+        <div class="stat-label">Total Blocked</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-number" id="todayBlocked">0</div>
+        <div class="stat-label">Today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="tabBlocked">0</div>
+        <div class="stat-label">This Tab</div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Current Site -->
+    <div class="site-section">
+      <div class="site-header">
+        <div class="site-info">
+          <span class="site-label">Current Site</span>
+          <span class="site-domain" id="currentDomain">—</span>
+        </div>
+        <button class="whitelist-btn" id="whitelistBtn" title="Toggle whitelist for this site">
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2L3 5.5V10C3 13.87 6.08 17.47 10 18.5C13.92 17.47 17 13.87 17 10V5.5L10 2Z" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span id="whitelistBtnText">Allow Site</span>
+        </button>
+      </div>
+      <div class="whitelisted-badge" id="whitelistedBadge" style="display:none">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Site is whitelisted — ads allowed
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- What's Blocked section -->
+    <div class="blocking-section">
+      <div class="section-title">What We Block</div>
+      <div class="tags">
+        <span class="tag">Network Ads</span>
+        <span class="tag">Native Ads</span>
+        <span class="tag">Sticky Banners</span>
+        <span class="tag">Mid-Article Ads</span>
+        <span class="tag">Taboola/Outbrain</span>
+        <span class="tag">Trackers</span>
+        <span class="tag">Ad Scripts</span>
+        <span class="tag">Social Pixels</span>
+      </div>
+    </div>
+
+    <!-- Whitelist Manager -->
+    <div class="divider"></div>
+    <div class="whitelist-section">
+      <div class="section-title">
+        Whitelist
+        <button class="expand-btn" id="expandWhitelist">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="whitelist-panel" id="whitelistPanel" style="display:none">
+        <div class="whitelist-list" id="whitelistList">
+          <div class="empty-state">No whitelisted sites</div>
+        </div>
+        <div class="add-whitelist">
+          <input type="text" id="whitelistInput" placeholder="example.com" spellcheck="false" />
+          <button class="add-btn" id="addWhitelistBtn">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>ShieldBlock v1.0</span>
+      <span class="footer-dot">·</span>
+      <span id="rulesCount">50 rules active</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

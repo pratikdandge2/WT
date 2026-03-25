@@ -1,0 +1,25 @@
+/* ShieldBlock - CSS-level ad hiding (runs before JS) */
+/* This provides instant hiding before the JS content script executes */
+
+ins.adsbygoogle,
+.adsbygoogle,
+[data-ad-client],
+[data-ad-slot],
+iframe[id^="google_ads_iframe"],
+div[id^="google_ads_"],
+[id^="div-gpt-ad"],
+[id^="taboola"],
+[id^="outbrain"],
+.OUTBRAIN,
+[class*="taboola"],
+[class*="outbrain"],
+[class*="ezoic-ad"],
+[id*="ezoic"],
+[class*="mediavine"],
+[class*="adthrive"],
+[class*="raptive"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
