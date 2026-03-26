@@ -1,25 +1,51 @@
-/* ShieldBlock - CSS-level ad hiding (runs before JS) */
-/* This provides instant hiding before the JS content script executes */
+ ins.adsbygoogle,
+ .adsbygoogle,
+ [data-ad-client],
+ [data-ad-slot],
+ iframe[id^="google_ads_iframe"],
+ div[id^="google_ads_"],
+ [id^="div-gpt-ad"],
+ [id^="taboola"],
+ [id^="outbrain"],
+ .OUTBRAIN,
+ [class*="taboola"],
+ [class*="outbrain"],
+ [class*="ezoic-ad"],
+ [id*="ezoic"],
+ [class*="mediavine"],
+ [class*="adthrive"],
+ [class*="raptive"],
 
-ins.adsbygoogle,
-.adsbygoogle,
-[data-ad-client],
-[data-ad-slot],
-iframe[id^="google_ads_iframe"],
-div[id^="google_ads_"],
-[id^="div-gpt-ad"],
-[id^="taboola"],
-[id^="outbrain"],
-.OUTBRAIN,
-[class*="taboola"],
-[class*="outbrain"],
-[class*="ezoic-ad"],
-[id*="ezoic"],
-[class*="mediavine"],
-[class*="adthrive"],
-[class*="raptive"] {
-  display: none !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  overflow: hidden !important;
-}
+ /* ── YouTube page ads ──────────────────────────────────────── */
+ ytd-in-feed-ad-layout-renderer,
+ ytd-ad-slot-renderer,
+ ytd-promoted-sparkles-web-renderer,
+ ytd-promoted-video-renderer,
+ ytd-display-ad-renderer,
+ ytd-statement-banner-renderer,
+ ytd-banner-promo-renderer,
+ #masthead-ad,
+ #player-ads,
+
+ /* YouTube in-video overlay ads (bottom-left card) */
+ .ytp-ad-overlay-slot,
+ .ytp-ad-overlay-container,
+ .ytp-ad-overlay-image,
+ .ytp-ad-overlay-close-container,
+ .ytp-ad-text-overlay,
+
+ /* YouTube player ad UI chrome */
+ .ytp-ad-player-overlay,
+ .ytp-ad-player-overlay-instream-info,
+ .ytp-ad-simple-ad-badge,
+ .ytp-ad-duration-remaining,
+ .ytp-ad-button,
+ .ytp-ad-visit-advertiser-button,
+ .ytp-ad-skip-button-container,
+ .ytp-ad-module,
+ ytd-action-companion-ad-renderer {
+   display: none !important;
+   visibility: hidden !important;
+   height: 0 !important;
+   overflow: hidden !important;
+ }

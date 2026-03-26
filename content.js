@@ -124,7 +124,35 @@
     'iframe[src*="outbrain"]',
     'iframe[src*="criteo"]',
     'iframe[src*="rubiconproject"]',
-    'iframe[src*="media.net"]'
+    'iframe[src*="media.net"]',
+
+    // ── YouTube Page Ads ──────────────────────────────────────────────────────
+    // In-feed promoted / sponsored video cards
+    'ytd-in-feed-ad-layout-renderer',
+    'ytd-ad-slot-renderer',
+    'ytd-promoted-sparkles-web-renderer',
+    'ytd-promoted-video-renderer',
+    'ytd-display-ad-renderer',
+    // Masthead banner (top of homepage)
+    '#masthead-ad',
+    'ytd-rich-item-renderer:has(ytd-ad-slot-renderer)',
+    // Statement banners (full-width promo strips)
+    'ytd-statement-banner-renderer',
+    'ytd-banner-promo-renderer',
+    // Shelf rows that are purely ad content
+    'ytd-rich-section-renderer:has(ytd-statement-banner-renderer)',
+    'ytd-rich-section-renderer:has(ytd-ad-slot-renderer)',
+    // Sidebar / watch page ads
+    '#player-ads',
+    '#panels ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"]',
+    // In-video overlay (bottom-left clickable overlay)
+    '.ytp-ad-overlay-container',
+    '.ytp-ad-text-overlay',
+    // Ad info / "Why this ad" button strip
+    '.ytp-ad-button-icon',
+    'ytd-action-companion-ad-renderer',
+    // Shopping / product shelf ads in search results
+    'ytd-shelf-renderer:has(.ytd-promoted-sparkles-web-renderer)'
   ];
 
   // ─── STICKY ELEMENT DETECTION ─────────────────────────────────────────────
@@ -158,7 +186,7 @@
     el.style.setProperty('overflow', 'hidden', 'important');
     blockedCount++;
     // Report block to background
-    chrome.runtime.sendMessage({ type: 'AD_BLOCKED' }).catch(() => {});
+    chrome.runtime.sendMessage({ type: 'AD_BLOCKED' }).catch(() => { });
   }
 
   function removeAds() {
@@ -170,7 +198,7 @@
         document.querySelectorAll(selector).forEach(el => {
           if (!isEssentialElement(el)) hideElement(el);
         });
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Detect sticky/fixed ads by position
@@ -179,7 +207,7 @@
         document.querySelectorAll(selector).forEach(el => {
           if (isStickyAd(el)) hideElement(el);
         });
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Remove empty ad placeholder divs that break layout
@@ -239,6 +267,112 @@
     });
   }
 
+  // ─── YOUTUBE AD HANDLER ───────────────────────────────────────────────────
+  // Handles in-video ads: auto-skip, mute+speed for unskippable, overlay hide
+
+  let ytInterval = null;
+
+  function handleYouTubeAds() {
+    if (!isEnabled) return;
+    if (!location.hostname.includes('youtube.com')) return;
+
+    // 1. Auto-click "Skip Ad" button the moment it becomes clickable
+    const skipBtn =
+      document.querySelector('.ytp-skip-ad-button') ||
+      document.querySelector('.ytp-ad-skip-button') ||
+      document.querySelector('button[class*="skip-ad"]');
+    if (skipBtn && skipBtn.offsetParent !== null) {
+      skipBtn.click();
+      chrome.runtime.sendMessage({ type: 'AD_BLOCKED' }).catch(() => { });
+      return;
+    }
+
+    // 2. Auto-close bottom-left overlay card ads (e.g. "Google AI + 200GB")
+    const overlayClose =
+      document.querySelector('.ytp-ad-overlay-close-button') ||
+      document.querySelector('.ytp-ad-overlay-close-container button');
+    if (overlayClose && overlayClose.offsetParent !== null) {
+      overlayClose.click();
+      chrome.runtime.sendMessage({ type: 'AD_BLOCKED' }).catch(() => { });
+    }
+    // Also directly hide the overlay slot in case close button isn't present yet
+    document.querySelectorAll(
+      '.ytp-ad-overlay-slot, .ytp-ad-overlay-container, .ytp-ad-overlay-image'
+    ).forEach(el => el.style.setProperty('display', 'none', 'important'));
+
+    // 3. Detect if an unskippable ad is currently playing in the video player
+    const adBadge = document.querySelector('.ytp-ad-simple-ad-badge');    // "Ad 1 of 2"
+    const adProgress = document.querySelector('.ytp-ad-duration-remaining'); // countdown timer
+    const adText = document.querySelector('.ytp-ad-preview-container');  // "Your video will play after the ad"
+    const isAdPlaying = !!(adBadge || adProgress || adText);
+
+    if (isAdPlaying) {
+      const video = document.querySelector('video');
+      if (video) {
+        // Mute the ad so it plays silently
+        if (!video.muted) video.muted = true;
+        // Slam playback speed to max so the ad finishes instantly
+        if (video.playbackRate < 16) video.playbackRate = 16;
+      }
+
+      // Hide the ad overlay UI (countdown, badge, visit-advertiser button)
+      [
+        '.ytp-ad-player-overlay',
+        '.ytp-ad-player-overlay-instream-info',
+        '.ytp-ad-simple-ad-badge',
+        '.ytp-ad-duration-remaining',
+        '.ytp-ad-preview-container',
+        '.ytp-ad-button',
+        '.ytp-ad-visit-advertiser-button',
+        '.ytp-ad-module',
+      ].forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+          el.style.setProperty('display', 'none', 'important');
+        });
+      });
+
+      chrome.runtime.sendMessage({ type: 'AD_BLOCKED' }).catch(() => { });
+    } else {
+      // Ad is over — restore normal speed and unmute
+      const video = document.querySelector('video');
+      if (video) {
+        if (video.playbackRate !== 1) video.playbackRate = 1;
+        if (video.muted) video.muted = false;
+      }
+    }
+  }
+
+  function startYouTubeHandler() {
+    if (ytInterval) clearInterval(ytInterval);
+    // Poll every 300ms — fast enough to catch ads before they play audio
+    ytInterval = setInterval(handleYouTubeAds, 300);
+  }
+
+  function stopYouTubeHandler() {
+    if (ytInterval) {
+      clearInterval(ytInterval);
+      ytInterval = null;
+    }
+    // Restore video to normal state if we stopped mid-ad
+    const video = document.querySelector('video');
+    if (video) {
+      video.playbackRate = 1;
+      video.muted = false;
+    }
+  }
+
+  // YouTube is a Single Page App — URL changes without a full page reload.
+  // Watch for navigation so the handler stays active across every video.
+  let lastUrl = location.href;
+  new MutationObserver(() => {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href;
+      if (isEnabled && location.hostname.includes('youtube.com')) {
+        setTimeout(removeAds, 500); // re-run cosmetic filter on new page
+      }
+    }
+  }).observe(document.documentElement, { subtree: true, childList: true });
+
   // ─── INIT ─────────────────────────────────────────────────────────────────
 
   async function init() {
@@ -252,6 +386,7 @@
     if (isEnabled) {
       removeAds();
       startObserver();
+      if (location.hostname.includes('youtube.com')) startYouTubeHandler();
     }
 
     // Run again after DOM is ready
@@ -268,8 +403,10 @@
       if (isEnabled) {
         removeAds();
         startObserver();
+        if (location.hostname.includes('youtube.com')) startYouTubeHandler();
       } else {
         stopObserver();
+        stopYouTubeHandler();
       }
     }
   });

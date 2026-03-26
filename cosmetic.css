@@ -20,20 +20,59 @@ div[data-google-query-id],
 [data-promoted],
 
 /* Generic ad classes */
-.ad-unit, .adunit, .ad-container, .ad-wrapper, .ad-banner,
-.advertisement, .advertisements,
-[data-ad-unit], [data-ad-slot],
+.ad-unit,
+.adunit,
+.ad-container,
+.ad-wrapper,
+.ad-banner,
+.advertisement,
+.advertisements,
+[data-ad-unit],
+[data-ad-slot],
 [aria-label="Advertisement"],
 [aria-label*="Sponsored"],
 
 /* Revcontent / MGID */
-[id*="revcontent"], [class*="revcontent"],
-[id*="mgid"], [class*="mgid"],
+[id*="revcontent"],
+[class*="revcontent"],
+[id*="mgid"],
+[class*="mgid"],
 
 /* Sticky/Anchor/Footer ads */
-[class*="sticky-ad"], [class*="anchor-ad"],
-[class*="adhesion"], [class*="floor-ad"],
-[class*="floating-ad"] {
+[class*="sticky-ad"],
+[class*="anchor-ad"],
+[class*="adhesion"],
+[class*="floor-ad"],
+[class*="floating-ad"],
+
+/* ── YouTube page ads ──────────────────────────────────────── */
+ytd-in-feed-ad-layout-renderer,
+ytd-ad-slot-renderer,
+ytd-promoted-sparkles-web-renderer,
+ytd-promoted-video-renderer,
+ytd-display-ad-renderer,
+ytd-statement-banner-renderer,
+ytd-banner-promo-renderer,
+#masthead-ad,
+#player-ads,
+
+/* YouTube in-video overlay ads (bottom-left card) */
+.ytp-ad-overlay-slot,
+.ytp-ad-overlay-container,
+.ytp-ad-overlay-image,
+.ytp-ad-overlay-close-container,
+.ytp-ad-text-overlay,
+
+/* YouTube player ad UI chrome */
+.ytp-ad-player-overlay,
+.ytp-ad-player-overlay-instream-info,
+.ytp-ad-simple-ad-badge,
+.ytp-ad-duration-remaining,
+.ytp-ad-button,
+.ytp-ad-visit-advertiser-button,
+.ytp-ad-skip-button-container,
+.ytp-ad-module,
+ytd-action-companion-ad-renderer {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
